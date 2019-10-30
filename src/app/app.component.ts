@@ -152,6 +152,51 @@ export class AppComponent implements OnInit {
    * the definition of an Island is : All LAND square that connect to an other LAND square
    */
   private findIslands() {
-    // Write your code below.
+    let color: string = this.generateRandomColor();
+
+    // for every land apply depth first search
+    // each time we find a new land => it is an island
+    for (let row = 0; row < SIZE; row++) {
+      for (let col = 0; col < SIZE; col++) {
+        if (this.getValueAt(row, col) === AreaStatus.Land) {
+          this.searchNeighbours(row, col, color);
+          this.numberOfIslands += 1;
+          color = this.generateRandomColor();
+        }
+      }
+    }
+  }
+
+  /**
+   * recursive DFS:
+   *    - we mark current land as discovered
+   *    - for every land: check if there is neighbors
+   *      - if we find discovered land we count it
+   *      - if not we apply dfs on the undiscovered neighbors
+   *      - if sea we do nothing
+   *    - if one discovered neighbor (self) we generate a new color
+   *    - else we use the current color
+   *
+   * notes: searchNeighbors calls will stack on the call stack until we find the sea or discovered land
+   *        then we go up the stack to color the tiles accordingly
+   */
+  private searchNeighbours(row: number, col: number, color: string) {
+    let hasDiscoveredNeighbors = false;
+    this.setValueAt(row, col, AreaStatus.Discovered);
+    for (let i = row - 1; i <= row + 1; i++) {
+      for (let j = col - 1; j <= col + 1; j++) {
+        if (this.getValueAt(i, j) === AreaStatus.Land) {
+          this.searchNeighbours(i, j, color);
+        }
+        if (this.getValueAt(i, j) === AreaStatus.Discovered) {
+          hasDiscoveredNeighbors = true;
+        }
+      }
+    }
+    if (!hasDiscoveredNeighbors) {
+      this.setIslandColor(row, col, this.generateRandomColor());
+    } else {
+      this.setIslandColor(row, col, color);
+    }
   }
 }
