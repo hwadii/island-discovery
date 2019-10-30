@@ -83,7 +83,6 @@ export class AppComponent implements OnInit {
    * generate new island
    */
   private generate() {
-
     const landColor = this.getInitialColor(AreaStatus.Land);
     let centerCol, centerRow, distanceToCenter, probability;
     for (let islandIdx = 0; islandIdx < NB_ISLANDS; islandIdx++) {
@@ -106,7 +105,6 @@ export class AppComponent implements OnInit {
    * render the island into the canvas Element
    */
   private render() {
-
     const canvas = this.canvasEl.nativeElement;
     canvas.width = this.canvasWidth;
     canvas.height = this.canvasHeight;
@@ -144,7 +142,22 @@ export class AppComponent implements OnInit {
    * attach event listeners
    */
   private attachEventListeners() {
-    // Write your code below.
+    const canvas = this.canvasEl.nativeElement;
+
+    canvas.addEventListener("click", ev => {
+      // get mouse coordinates inside canvas
+      this.position = {
+        x: Math.floor(ev.offsetX / (canvas.width / SIZE)),
+        y: Math.floor(ev.offsetY / (canvas.height / SIZE))
+      }
+
+      // change oldColor by newColor every time oldColor appears in array
+      const oldColor = this.getIslandColor(this.position.y, this.position.x);
+      if (oldColor !== SEA_COLOR) {
+        this.color = this.color.map(currentColor => oldColor === currentColor ? this.newColor : currentColor);
+        this.render();
+      }
+    });
   }
 
   /**
