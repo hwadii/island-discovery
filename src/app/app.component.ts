@@ -48,8 +48,8 @@ export class AppComponent implements OnInit {
     this.render();
   }
 
-  public onColorChanged(event: Event) {
-    // Write your code below.
+  public onColorChanged(event) {
+    this.newColor = event.target.value;
   }
 
   private getInitialColor(value: number): string {
