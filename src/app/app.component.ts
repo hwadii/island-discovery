@@ -168,7 +168,7 @@ export class AppComponent implements OnInit {
     let color: string = this.generateRandomColor();
 
     // for every land apply depth first search
-    // each time we find a new land => it is an island
+    // each time we find a new land => it is a new island
     for (let row = 0; row < SIZE; row++) {
       for (let col = 0; col < SIZE; col++) {
         if (this.getValueAt(row, col) === AreaStatus.Land) {
@@ -187,11 +187,11 @@ export class AppComponent implements OnInit {
    *      - if we find discovered land we count it
    *      - if not we apply dfs on the undiscovered neighbors
    *      - if sea we do nothing
-   *    - if one discovered neighbor (self) we generate a new color
-   *    - else we use the current color
+   *    - if has discovered neighbor we color it
+   *    - else we generate a new color (no discovered neighbors)
    *
    * notes: searchNeighbors calls will stack on the call stack until we find the sea or discovered land
-   *        then we go up the stack to color the tiles accordingly
+   *        then we go down the stack to color the tiles accordingly
    */
   private searchNeighbours(row: number, col: number, color: string) {
     let hasDiscoveredNeighbors = false;
@@ -206,10 +206,10 @@ export class AppComponent implements OnInit {
         }
       }
     }
-    if (!hasDiscoveredNeighbors) {
-      this.setIslandColor(row, col, this.generateRandomColor());
-    } else {
+    if (hasDiscoveredNeighbors) {
       this.setIslandColor(row, col, color);
+    } else {
+      this.setIslandColor(row, col, this.generateRandomColor());
     }
   }
 }
